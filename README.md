@@ -54,7 +54,7 @@
 
     /* --- LOGO DE LA EDITORIAL --- */
     .editorial-logo-modal {
-      height: clamp(50px, 8vh, 85px);
+      height: clamp(40px, 7vh, 85px);
       width: auto;
       max-width: 80%;
       margin: 0 auto;
@@ -63,7 +63,7 @@
     }
 
     .editorial-logo-hud {
-      height: clamp(26px, 4vh, 42px);
+      height: clamp(22px, 3.5vh, 42px);
       width: auto;
       object-fit: contain;
       filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
@@ -72,10 +72,10 @@
     .brand-container {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: clamp(6px, 1.5vw, 12px);
     }
 
-    /* --- PANTALLAS MODALES (INICIAL Y FINAL) --- */
+    /* --- PANTALLAS MODALES (RESPONSIVE) --- */
     .modal-overlay {
       position: absolute;
       inset: 0;
@@ -85,7 +85,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: clamp(10px, 2vw, 20px);
       transition: opacity 0.4s ease;
     }
 
@@ -101,16 +101,18 @@
       box-shadow: 0 0 40px rgba(243, 198, 79, 0.25), inset 0 0 20px rgba(0,0,0,0.9);
       max-width: 580px;
       width: 100%;
-      padding: clamp(16px, 3vh, 28px);
+      max-height: 95dvh;
+      overflow-y: auto;
+      padding: clamp(12px, 2.5vh, 28px);
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: clamp(10px, 2vh, 16px);
+      gap: clamp(8px, 1.8vh, 16px);
     }
 
     .modal-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.2rem, 3.5vh, 1.7rem);
+      font-size: clamp(1.1rem, 3vh, 1.7rem);
       color: var(--gold-primary);
       text-shadow: 0 0 12px var(--gold-glow);
     }
@@ -120,12 +122,12 @@
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid var(--stone-border);
       border-radius: 8px;
-      padding: clamp(10px, 2vh, 16px);
+      padding: clamp(8px, 1.8vh, 16px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      font-size: clamp(0.8rem, 1.8vh, 0.95rem);
-      line-height: 1.4;
+      gap: clamp(6px, 1vh, 10px);
+      font-size: clamp(0.75rem, 1.6vh, 0.95rem);
+      line-height: 1.35;
     }
 
     .rule-item {
@@ -140,9 +142,9 @@
       border-radius: 8px;
       color: #fff;
       font-family: 'Cinzel', serif;
-      font-size: clamp(1rem, 2.5vh, 1.3rem);
+      font-size: clamp(0.9rem, 2.2vh, 1.3rem);
       font-weight: 900;
-      padding: clamp(10px, 2vh, 14px) 20px;
+      padding: clamp(8px, 1.5vh, 14px) 20px;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,0,0,0.8);
       transition: transform 0.1s;
@@ -152,17 +154,17 @@
       transform: scale(0.97);
     }
 
-    /* --- LAYOUT DEL JUEGO --- */
+    /* --- LAYOUT PRINCIPAL Y ADAPTABILIDAD --- */
     .game-viewport {
       position: relative;
       z-index: 10;
-      width: 100%;
-      height: 100%;
-      max-width: 1200px;
-      padding: clamp(8px, 2vh, 16px);
+      width: 100vw;
+      height: 100dvh;
+      max-width: 1400px;
+      padding: clamp(6px, 1.5vh, 16px);
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1.5vh, 14px);
+      gap: clamp(4px, 1vh, 12px);
     }
 
     .hud-header {
@@ -173,21 +175,21 @@
       background: rgba(20, 16, 13, 0.92);
       border: 2px solid var(--stone-border);
       border-radius: 8px;
-      padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
+      padding: clamp(4px, 1vh, 8px) clamp(10px, 2vw, 20px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
     .hud-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.85rem, 2.2vh, 1.2rem);
+      font-size: clamp(0.75rem, 2vh, 1.2rem);
       color: var(--gold-primary);
       text-shadow: 0 0 8px var(--gold-glow);
     }
 
     .hud-stats {
       display: flex;
-      gap: clamp(12px, 3vw, 30px);
-      font-size: clamp(0.85rem, 2.2vh, 1.1rem);
+      gap: clamp(10px, 2.5vw, 30px);
+      font-size: clamp(0.75rem, 2vh, 1.1rem);
       font-weight: 900;
     }
 
@@ -200,14 +202,15 @@
       flex: 1 1 auto;
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1.5vh, 14px);
+      gap: clamp(6px, 1.2vh, 14px);
       min-height: 0;
+      width: 100%;
     }
 
-    /* ESCENARIO PUERTA Y PERSONAJE */
+    /* ESCENARIO DE LA PUERTA Y PERSONAJE */
     .stage-container {
-      flex: 1 1 45%;
-      min-height: 140px;
+      flex: 1 1 42%;
+      min-height: 0;
       position: relative;
       background: radial-gradient(circle at 50% 100%, #1a1410 0%, #050403 100%);
       border: 2px solid var(--stone-border);
@@ -223,32 +226,31 @@
     .torch-light {
       position: absolute;
       top: 15%;
-      font-size: clamp(1.2rem, 4vh, 2.2rem);
+      font-size: clamp(1rem, 3.5vh, 2.2rem);
       filter: drop-shadow(0 0 14px #ff6600);
       animation: torchFlicker 0.15s infinite alternate;
     }
-    .torch-light.left { left: 5%; }
-    .torch-light.right { right: 5%; }
+    .torch-light.left { left: 4%; }
+    .torch-light.right { right: 4%; }
 
     @keyframes torchFlicker {
       0% { opacity: 0.8; transform: scale(0.95); }
       100% { opacity: 1; transform: scale(1.05); }
     }
 
-    /* MARCO Y PUERTA */
     .dungeon-arch {
-      height: 92%;
+      height: 94%;
       aspect-ratio: 0.82/1;
+      max-width: 90%;
       position: relative;
       background: #000;
       border-radius: 110px 110px 0 0;
       box-shadow: 0 0 35px rgba(0,0,0,0.95), inset 0 0 20px #000;
       display: flex;
-      border: clamp(8px, 1.5vh, 14px) solid #28201a;
+      border: clamp(6px, 1.2vh, 14px) solid #28201a;
       border-bottom: none;
     }
 
-    /* CÁMARA TRAS LA PUERTA */
     .character-chamber {
       position: absolute;
       inset: 0;
@@ -261,7 +263,6 @@
       background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.25) 0%, transparent 80%);
     }
 
-    /* IMAGEN DEL PERSONAJE ROMANO */
     .roman-character-img {
       height: 88%;
       width: auto;
@@ -294,59 +295,53 @@
     .dungeon-arch.open .door-leaf.left { transform: rotateY(-112deg); }
     .dungeon-arch.open .door-leaf.right { transform: rotateY(112deg); }
 
-    /* CONSOLA DE INTERACCIÓN */
+    /* CONSOLA Y TECLADO VIRTUAL */
     .console-panel {
-      flex: 1 1 50%;
+      flex: 1 1 58%;
+      min-height: 0;
       background: rgba(22, 17, 14, 0.95);
       border: 2px solid var(--stone-border);
       border-radius: 10px;
-      padding: clamp(8px, 1.5vh, 16px);
+      padding: clamp(6px, 1.2vh, 16px);
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      gap: clamp(4px, 1vh, 10px);
+      gap: clamp(4px, 0.8vh, 10px);
     }
 
     .rune-display-card {
       background: #060504;
       border: 1px solid #5a4838;
       border-radius: 6px;
-      padding: clamp(2px, 0.8vh, 6px) clamp(15px, 4vw, 35px);
+      padding: clamp(4px, 1vh, 8px) clamp(12px, 3vw, 35px);
       text-align: center;
       width: 100%;
-      max-width: 400px;
-    }
-
-    .rune-label {
-      font-size: clamp(0.65rem, 1.5vh, 0.8rem);
-      color: #9e8a75;
-      letter-spacing: 2px;
+      max-width: 480px;
     }
 
     .decimal-number {
-      font-size: clamp(1.6rem, 4.5vh, 2.6rem);
+      font-size: clamp(1.6rem, 4.5vh, 2.8rem);
       font-weight: 900;
       color: var(--gold-primary);
       text-shadow: 0 0 10px var(--gold-glow);
       line-height: 1.1;
     }
 
-    /* VISOR VIRTUAL SIN TECLADO NATIVO */
     .roman-input-display {
       width: 100%;
-      max-width: 400px;
-      min-height: clamp(42px, 6vh, 54px);
+      max-width: 480px;
+      min-height: clamp(38px, 5.5vh, 54px);
       background: #000;
       border: 2px solid var(--stone-border);
       border-radius: 6px;
-      padding: clamp(6px, 1.2vh, 10px);
+      padding: clamp(4px, 1vh, 8px);
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.2rem, 3.2vh, 1.7rem);
+      font-size: clamp(1.1rem, 3vh, 1.7rem);
       font-weight: bold;
       color: #fff;
       text-align: center;
-      letter-spacing: 4px;
+      letter-spacing: 3px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -356,7 +351,7 @@
 
     .roman-input-display .placeholder-text {
       color: #5a4838;
-      font-size: clamp(0.85rem, 2vh, 1rem);
+      font-size: clamp(0.75rem, 1.8vh, 1rem);
       letter-spacing: 2px;
       font-weight: normal;
     }
@@ -364,9 +359,9 @@
     .roman-keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: clamp(4px, 1vw, 8px);
+      gap: clamp(3px, 0.8vw, 8px);
       width: 100%;
-      max-width: 420px;
+      max-width: 480px;
     }
 
     .key-btn {
@@ -375,9 +370,9 @@
       border-radius: 6px;
       color: #e2d9cc;
       font-family: 'Cinzel', serif;
-      font-size: clamp(1rem, 2.4vh, 1.3rem);
+      font-size: clamp(0.9rem, 2.2vh, 1.3rem);
       font-weight: 700;
-      padding: clamp(10px, 1.8vh, 14px) 0;
+      padding: clamp(8px, 1.5vh, 14px) 0;
       cursor: pointer;
       display: flex;
       justify-content: center;
@@ -402,7 +397,7 @@
 
     .feedback-banner {
       min-height: 1.2em;
-      font-size: clamp(0.75rem, 1.8vh, 0.95rem);
+      font-size: clamp(0.7rem, 1.6vh, 0.95rem);
       font-weight: 700;
       text-align: center;
     }
@@ -410,11 +405,25 @@
     .feedback-banner.success { color: var(--green-success); }
     .feedback-banner.error { color: var(--ruby-red); }
 
-    /* HORIZONTAL EN PANTALLAS ANCHAS / PIZARRAS DIGITALES */
-    @media (min-aspect-ratio: 1.2/1) and (min-height: 350px) {
-      .main-layout { flex-direction: row; }
-      .stage-container { flex: 1 1 50%; height: 100%; }
-      .console-panel { flex: 1 1 50%; height: 100%; }
+    /* REGLAS ADAPTATIVAS SEGÚN ORIENTACIÓN Y ALTURA DE PANTALLA */
+    @media (min-aspect-ratio: 1/1), (max-height: 520px) {
+      .main-layout { 
+        flex-direction: row; 
+      }
+      .stage-container { 
+        flex: 1 1 48%; 
+        height: 100%; 
+      }
+      .console-panel { 
+        flex: 1 1 52%; 
+        height: 100%; 
+      }
+    }
+
+    @media (max-width: 360px) {
+      .hud-title { display: none; }
+      .roman-keypad { gap: 3px; }
+      .key-btn { padding: 6px 0; }
     }
   </style>
 </head>
@@ -528,11 +537,10 @@
       <!-- CONSOLA DE INTERACCIÓN -->
       <section class="console-panel">
         <div class="rune-display-card">
-          <div class="rune-label">NÚMERO DECIMAL</div>
           <div class="decimal-number" id="decimalDisplay">47</div>
         </div>
 
-        <!-- VISOR INTERNO (SIN INPUT DE TEXTO TECLADO NATIVO) -->
+        <!-- VISOR INTERNO (SIN INPUT NATIVO DEL SISTEMA) -->
         <div id="romanDisplay" class="roman-input-display">
           <span class="placeholder-text">INGRESA CÓDIGO</span>
         </div>

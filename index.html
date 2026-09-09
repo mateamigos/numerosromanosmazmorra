@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>El Escape de la Mazmorra Romana</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;900&display=swap');
+
+    :root {
+      --gold-primary: #f3c64f;
+      --gold-glow: rgba(243, 198, 79, 0.4);
+      --stone-border: #4a3e35;
+      --ruby-red: #ff4d4d;
+      --green-success: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      background-color: #0c0a08;
+      color: #e2d9cc;
+      font-family: 'Cinzel', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #ambientCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.9) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* --- PANTALLAS MODALES (INICIAL Y FINAL) --- */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5, 4, 3, 0.92);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-card {
+      background: linear-gradient(180deg, #221a14 0%, #120d09 100%);
+      border: 3px solid var(--gold-primary);
+      border-radius: 14px;
+      box-shadow: 0 0 40px rgba(243, 198, 79, 0.25), inset 0 0 20px rgba(0,0,0,0.9);
+      max-width: 580px;
+      width: 100%;
+      padding: clamp(16px, 3vh, 28px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 2vh, 18px);
+    }
+
+    .modal-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.2rem, 3.5vh, 1.8rem);
+      color: var(--gold-primary);
+      text-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .rules-list {
+      text-align: left;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--stone-border);
+      border-radius: 8px;
+      padding: clamp(10px, 2vh, 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: clamp(0.8rem, 1.8vh, 0.95rem);
+      line-height: 1.4;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .start-btn {
+      background: linear-gradient(180deg, #c9932b 0%, #7a5613 100%);
+      border: 2px solid #e5ab37;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.5vh, 1.3rem);
+      font-weight: 900;
+      padding: clamp(10px, 2vh, 14px) 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+      transition: transform 0.1s;
+    }
+
+    .start-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* --- LAYOUT DEL JUEGO --- */
+    .game-viewport {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      max-width: 1200px;
+      padding: clamp(8px, 2vh, 16px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.5vh, 14px);
+    }
+
+    .hud-header {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20, 16, 13, 0.92);
+      border: 2px solid var(--stone-border);
+      border-radius: 8px;
+      padding: clamp(6px, 1vh, 12px) clamp(12px, 2vw, 24px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    .hud-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(0.85rem, 2.2vh, 1.3rem);
+      color: var(--gold-primary);
+      text-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .hud-stats {
+      display: flex;
+      gap: clamp(12px, 3vw, 30px);
+      font-size: clamp(0.85rem, 2.2vh, 1.1rem);
+      font-weight: 900;
+    }
+
+    .stat-val {
+      color: #fff;
+      text-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .main-layout {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.5vh, 14px);
+      min-height: 0;
+    }
+
+    /* ESCENARIO PUERTA Y PERSONAJE */
+    .stage-container {
+      flex: 1 1 45%;
+      min-height: 140px;
+      position: relative;
+      background: radial-gradient(circle at 50% 100%, #1a1410 0%, #050403 100%);
+      border: 2px solid var(--stone-border);
+      border-radius: 10px;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.95);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      overflow: hidden;
+      perspective: 900px;
+    }
+
+    .torch-light {
+      position: absolute;
+      top: 15%;
+      font-size: clamp(1.2rem, 4vh, 2.2rem);
+      filter: drop-shadow(0 0 14px #ff6600);
+      animation: torchFlicker 0.15s infinite alternate;
+    }
+    .torch-light.left { left: 5%; }
+    .torch-light.right { right: 5%; }
+
+    @keyframes torchFlicker {
+      0% { opacity: 0.8; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* MARCO Y PUERTA */
+    .dungeon-arch {
+      height: 92%;
+      aspect-ratio: 0.82/1;
+      position: relative;
+      background: #000;
+      border-radius: 110px 110px 0 0;
+      box-shadow: 0 0 35px rgba(0,0,0,0.95), inset 0 0 20px #000;
+      display: flex;
+      border: clamp(8px, 1.5vh, 14px) solid #28201a;
+      border-bottom: none;
+    }
+
+    /* CÁMARA TRAS LA PUERTA */
+    .character-chamber {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 5px;
+      z-index: 1;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.25) 0%, transparent 80%);
+    }
+
+    /* IMAGEN DEL PERSONAJE ROMANO */
+    .roman-character-img {
+      height: 88%;
+      width: auto;
+      max-width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(0,0,0,0.9));
+      opacity: 0;
+      transform: scale(0.75);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .dungeon-arch.open .roman-character-img {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .door-leaf {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      z-index: 2;
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+      background-color: #1a120c;
+    }
+
+    .door-leaf.left { transform-origin: left; border-right: 1px solid #0d0906; }
+    .door-leaf.right { transform-origin: right; border-left: 1px solid #0d0906; }
+
+    .dungeon-arch.open .door-leaf.left { transform: rotateY(-112deg); }
+    .dungeon-arch.open .door-leaf.right { transform: rotateY(112deg); }
+
+    /* CONSOLA DE INTERACCIÓN */
+    .console-panel {
+      flex: 1 1 50%;
+      background: rgba(22, 17, 14, 0.95);
+      border: 2px solid var(--stone-border);
+      border-radius: 10px;
+      padding: clamp(8px, 1.5vh, 16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      gap: clamp(4px, 1vh, 10px);
+    }
+
+    .rune-display-card {
+      background: #060504;
+      border: 1px solid #5a4838;
+      border-radius: 6px;
+      padding: clamp(2px, 0.8vh, 6px) clamp(15px, 4vw, 35px);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .rune-label {
+      font-size: clamp(0.65rem, 1.5vh, 0.8rem);
+      color: #9e8a75;
+      letter-spacing: 2px;
+    }
+
+    .decimal-number {
+      font-size: clamp(1.6rem, 4.5vh, 2.6rem);
+      font-weight: 900;
+      color: var(--gold-primary);
+      text-shadow: 0 0 10px var(--gold-glow);
+      line-height: 1.1;
+    }
+
+    .roman-input {
+      width: 100%;
+      max-width: 400px;
+      background: #000;
+      border: 2px solid var(--stone-border);
+      border-radius: 6px;
+      padding: clamp(6px, 1.2vh, 10px);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.1rem, 3vh, 1.6rem);
+      color: #fff;
+      text-align: center;
+      letter-spacing: 4px;
+      outline: none;
+    }
+
+    .roman-input:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .roman-keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(4px, 1vw, 8px);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .key-btn {
+      background: linear-gradient(180deg, #3d3025 0%, #221a14 100%);
+      border: 1px solid #6b5542;
+      border-radius: 5px;
+      color: #e2d9cc;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.9rem, 2.2vh, 1.2rem);
+      font-weight: 700;
+      padding: clamp(8px, 1.5vh, 12px) 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .key-btn:active { background: var(--gold-primary); color: #000; }
+
+    .key-btn.action-btn {
+      background: linear-gradient(180deg, #7a2222 0%, #421212 100%);
+      border-color: #a83232;
+    }
+
+    .key-btn.submit-btn {
+      grid-column: span 3;
+      background: linear-gradient(180deg, #c9932b 0%, #7a5613 100%);
+      border-color: #e5ab37;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .feedback-banner {
+      min-height: 1.2em;
+      font-size: clamp(0.75rem, 1.8vh, 0.95rem);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .feedback-banner.success { color: var(--green-success); }
+    .feedback-banner.error { color: var(--ruby-red); }
+
+    /* HORIZONTAL EN PANTALLAS ANCHAS / PIZARRAS */
+    @media (min-aspect-ratio: 1.2/1) and (min-height: 350px) {
+      .main-layout { flex-direction: row; }
+      .stage-container { flex: 1 1 50%; height: 100%; }
+      .console-panel { flex: 1 1 50%; height: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="ambientCanvas"></canvas>
+  <div class="vignette"></div>
+
+  <!-- PANTALLA INICIAL DE BIENVENIDA -->
+  <div class="modal-overlay" id="startModal">
+    <div class="modal-card">
+      <h1 class="modal-title">🏛️ EL ESCAPE DE LA MAZMORRA</h1>
+      <p style="color: #c5b49d;">Escribe el código en números romanos para abrir la puerta y liberar al centurión.</p>
+      
+      <div class="rules-list">
+        <div class="rule-item">
+          <span>📜</span>
+          <span><strong>Desafío de 30 Rondas:</strong> Deberás resolver 30 puertas con números decimales aleatorios hasta el <strong>999</strong>.</span>
+        </div>
+        <div class="rule-item">
+          <span>👍</span>
+          <span><strong>Aciertos (+10 Puntos):</strong> Si aciertas el código, el romano mostrará su aprobación con el pulgar arriba.</span>
+        </div>
+        <div class="rule-item">
+          <span>👎</span>
+          <span><strong>Errores (-5 Puntos):</strong> Si fallas, el romano aparecerá lamentándose y restarás 5 puntos.</span>
+        </div>
+        <div class="rule-item">
+          <span>⌨️</span>
+          <span><strong>Controles:</strong> Puedes pulsar los botones de la pantalla o escribir con tu teclado.</span>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startGame()">¡COMENZAR DESAFÍO! 🛡️</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA FINAL (RESUMEN) -->
+  <div class="modal-overlay hidden" id="endModal">
+    <div class="modal-card">
+      <h1 class="modal-title" id="endTitle">🏆 ¡DESAFÍO COMPLETADO!</h1>
+      <p id="endSubtitle" style="color: #c5b49d;">Has completado las 30 rondas de la mazmorra.</p>
+      
+      <div class="rules-list" style="text-align: center; align-items: center;">
+        <div style="font-size: 1.1rem; color: #9e8a75;">PUNTUACIÓN FINAL</div>
+        <div style="font-size: 3rem; font-weight: 900; color: var(--gold-primary);" id="finalScoreVal">0</div>
+        <div id="rankBadge" style="font-size: 1rem; font-weight: bold; color: var(--green-success);">Rango: Centurión Imperial</div>
+      </div>
+
+      <button class="start-btn" onclick="restartGame()">JUGAR DE NUEVO 🔄</button>
+    </div>
+  </div>
+
+  <!-- INTERFAZ DEL JUEGO -->
+  <div class="game-viewport">
+    <header class="hud-header">
+      <div class="hud-title">🏛️ MAZMORRA ROMANA</div>
+      <div class="hud-stats">
+        <div>RONDA <span id="roundVal" class="stat-val">1/30</span></div>
+        <div>PUNTOS <span id="scoreVal" class="stat-val">0</span></div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <!-- ESCENARIO CON PUERTA Y PERSONAJE -->
+      <main class="stage-container">
+        <div class="torch-light left">🔥</div>
+        
+        <div class="dungeon-arch" id="archFrame">
+          <!-- CÁMARA INTERIOR QUE REVELA LA IMAGEN CORRESPONDIENTE -->
+          <div class="character-chamber" id="characterChamber">
+            <!-- Imagen inyectada dinámicamente -->
+          </div>
+          
+          <!-- HOJA IZQUIERDA DE LA PUERTA -->
+          <div class="door-leaf left">
+            <svg style="width:100%;height:100%;" viewBox="0 0 100 200" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="woodG" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#2d1e14"/><stop offset="100%" stop-color="#1c120b"/>
+                </linearGradient>
+                <linearGradient id="ironG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#5a5a5a"/><stop offset="100%" stop-color="#111111"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="100" height="200" fill="url(#woodG)"/>
+              <rect x="0" y="25" width="100" height="14" fill="url(#ironG)"/>
+              <rect x="0" y="100" width="100" height="14" fill="url(#ironG)"/>
+              <rect x="0" y="170" width="100" height="14" fill="url(#ironG)"/>
+              <circle cx="85" cy="107" r="5" fill="none" stroke="#aaa" stroke-width="2.5"/>
+            </svg>
+          </div>
+
+          <!-- HOJA DERECHA DE LA PUERTA -->
+          <div class="door-leaf right">
+            <svg style="width:100%;height:100%;" viewBox="0 0 100 200" preserveAspectRatio="none">
+              <rect x="0" y="0" width="100" height="200" fill="url(#woodG)"/>
+              <rect x="0" y="25" width="100" height="14" fill="url(#ironG)"/>
+              <rect x="0" y="100" width="100" height="14" fill="url(#ironG)"/>
+              <rect x="0" y="170" width="100" height="14" fill="url(#ironG)"/>
+              <circle cx="15" cy="107" r="5" fill="none" stroke="#aaa" stroke-width="2.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="torch-light right">🔥</div>
+      </main>
+
+      <!-- CONSOLA DE INTERACCIÓN -->
+      <section class="console-panel">
+        <div class="rune-display-card">
+          <div class="rune-label">NÚMERO DECIMAL</div>
+          <div class="decimal-number" id="decimalDisplay">47</div>
+        </div>
+
+        <input type="text" id="romanInput" class="roman-input" placeholder="CÓDIGO" autocomplete="off">
+
+        <div class="roman-keypad">
+          <button class="key-btn" onclick="appendSymbol('I')">I</button>
+          <button class="key-btn" onclick="appendSymbol('V')">V</button>
+          <button class="key-btn" onclick="appendSymbol('X')">X</button>
+          <button class="key-btn" onclick="appendSymbol('L')">L</button>
+          <button class="key-btn" onclick="appendSymbol('C')">C</button>
+          <button class="key-btn" onclick="appendSymbol('D')">D</button>
+          <button class="key-btn" onclick="appendSymbol('M')">M</button>
+          <button class="key-btn action-btn" onclick="clearInput()">⌫</button>
+          <button class="key-btn submit-btn" onclick="validateCode()">ABRIR PUERTA 🗝️</button>
+        </div>
+
+        <div id="feedbackBanner" class="feedback-banner"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    /* --- REFERENCIA A TUS IMÁGENES DE ACIERTO Y ERROR --- */
+    const ACIERTO_IMG_HTML = `<img src="ACIERTO.png" alt="¡Acierto!" class="roman-character-img">`;
+    const ERROR_IMG_HTML = `<img src="ERROR.png" alt="¡Error!" class="roman-character-img">`;
+
+    /* --- EFECTOS DE SONIDO SINTETIZADOS --- */
+    const AudioSys = {
+      ctx: null,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      },
+      playClick() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.04);
+      },
+      playSuccess() {
+        this.init();
+        const now = this.ctx.currentTime;
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.08, now + idx * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.06);
+          osc.stop(now + idx * 0.06 + 0.4);
+        });
+      },
+      playError() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.linearRampToValueAtTime(55, now + 0.3);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    };
+
+    /* --- LÓGICA DEL JUEGO --- */
+    const MAX_ROUNDS = 30;
+    let currentRound = 1;
+    let currentScore = 0;
+    let targetDecimal = 0;
+    let isAnimating = false;
+
+    const decimalDisplay = document.getElementById('decimalDisplay');
+    const romanInput = document.getElementById('romanInput');
+    const feedbackBanner = document.getElementById('feedbackBanner');
+    const archFrame = document.getElementById('archFrame');
+    const characterChamber = document.getElementById('characterChamber');
+    const roundVal = document.getElementById('roundVal');
+    const scoreVal = document.getElementById('scoreVal');
+    const startModal = document.getElementById('startModal');
+    const endModal = document.getElementById('endModal');
+
+    function toRoman(num) {
+      const map = [
+        [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+        [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+        [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+      ];
+      let str = '';
+      for (const [val, symbol] of map) {
+        while (num >= val) {
+          str += symbol;
+          num -= val;
+        }
+      }
+      return str;
+    }
+
+    function startGame() {
+      startModal.classList.add('hidden');
+      currentRound = 1;
+      currentScore = 0;
+      updateHUD();
+      generateRound();
+    }
+
+    function generateRound() {
+      // Dificultad progresiva de 1 a 999
+      let min = 1, max = 30;
+      if (currentRound > 8 && currentRound <= 18) {
+        min = 31; max = 300;
+      } else if (currentRound > 18) {
+        min = 100; max = 999;
+      }
+
+      targetDecimal = Math.floor(Math.random() * (max - min + 1)) + min;
+      decimalDisplay.textContent = targetDecimal;
+      romanInput.value = '';
+      romanInput.focus();
+    }
+
+    function appendSymbol(char) {
+      AudioSys.playClick();
+      romanInput.value += char;
+      romanInput.focus();
+    }
+
+    function clearInput() {
+      AudioSys.playClick();
+      romanInput.value = romanInput.value.slice(0, -1);
+      romanInput.focus();
+    }
+
+    function validateCode() {
+      if (isAnimating) return;
+
+      const userAttempt = romanInput.value.trim().toUpperCase();
+      const expectedRoman = toRoman(targetDecimal);
+
+      if (!userAttempt) {
+        showFeedback("¡INGRESA UN CÓDIGO!", "error");
+        return;
+      }
+
+      isAnimating = true;
+
+      if (userAttempt === expectedRoman) {
+        // ACIERTO (+10 PUNTOS) Y MUESTRA ACIERTO.png
+        currentScore += 10;
+        AudioSys.playSuccess();
+        showFeedback("¡CORRECTO! +10 PUNTOS", "success");
+        characterChamber.innerHTML = ACIERTO_IMG_HTML;
+      } else {
+        // ERROR (-5 PUNTOS) Y MUESTRA ERROR.png
+        currentScore = Math.max(0, currentScore - 5);
+        AudioSys.playError();
+        showFeedback(`¡INCORRECTO! (-5 PTS) CÓDIGO: ${expectedRoman}`, "error");
+        characterChamber.innerHTML = ERROR_IMG_HTML;
+      }
+
+      updateHUD();
+      archFrame.classList.add('open');
+
+      // Animación de apertura y cambio de ronda
+      setTimeout(() => {
+        archFrame.classList.remove('open');
+        showFeedback("", "");
+
+        if (currentRound < MAX_ROUNDS) {
+          currentRound++;
+          updateHUD();
+          generateRound();
+          isAnimating = false;
+        } else {
+          endGame();
+        }
+      }, 2200);
+    }
+
+    function updateHUD() {
+      roundVal.textContent = `${currentRound}/${MAX_ROUNDS}`;
+      scoreVal.textContent = currentScore;
+    }
+
+    function showFeedback(text, type) {
+      feedbackBanner.textContent = text;
+      feedbackBanner.className = `feedback-banner ${type}`;
+    }
+
+    function endGame() {
+      document.getElementById('finalScoreVal').textContent = currentScore;
+      
+      let rank = "Legionario Romano";
+      if (currentScore >= 250) rank = "César del Imperio 👑";
+      else if (currentScore >= 180) rank = "Centurión Imperial ⚔️";
+      else if (currentScore >= 100) rank = "Gladiador Experto 🛡️";
+
+      document.getElementById('rankBadge').textContent = `Rango: ${rank}`;
+      endModal.classList.remove('hidden');
+    }
+
+    function restartGame() {
+      endModal.classList.add('hidden');
+      startGame();
+    }
+
+    romanInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') validateCode();
+    });
+
+    romanInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^IVXLCDM]/g, '');
+    });
+
+    /* --- FONDO DE PARTÍCULAS --- */
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 10;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedY = Math.random() * 1 + 0.2;
+        this.opacity = Math.random() * 0.4 + 0.1;
+      }
+      update() {
+        this.y -= this.speedY;
+        if (this.y < -10) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = `rgba(243, 198, 79, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 30; i++) particles.push(new Particle());
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+  </script>
+</body>
+</html>

@@ -52,30 +52,30 @@
       pointer-events: none;
     }
 
-    /* --- LOGO DE LA EDITORIAL --- */
+    /* --- LOGO DE LA EDITORIAL (TAMAÑO AMPLIADO) --- */
     .editorial-logo-modal {
-      height: clamp(40px, 7vh, 85px);
+      height: clamp(65px, 12vh, 120px);
       width: auto;
-      max-width: 80%;
+      max-width: 85%;
       margin: 0 auto;
       object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(243, 198, 79, 0.3));
+      filter: drop-shadow(0 0 14px rgba(243, 198, 79, 0.45));
     }
 
     .editorial-logo-hud {
-      height: clamp(22px, 3.5vh, 42px);
+      height: clamp(32px, 5.5vh, 58px);
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
     }
 
     .brand-container {
       display: flex;
       align-items: center;
-      gap: clamp(6px, 1.5vw, 12px);
+      gap: clamp(8px, 1.8vw, 16px);
     }
 
-    /* --- PANTALLAS MODALES (RESPONSIVE) --- */
+    /* --- PANTALLAS MODALES --- */
     .modal-overlay {
       position: absolute;
       inset: 0;
@@ -154,7 +154,7 @@
       transform: scale(0.97);
     }
 
-    /* --- LAYOUT PRINCIPAL Y ADAPTABILIDAD --- */
+    /* --- LAYOUT ADAPTATIVO UNIVERSAL --- */
     .game-viewport {
       position: relative;
       z-index: 10;
@@ -175,13 +175,13 @@
       background: rgba(20, 16, 13, 0.92);
       border: 2px solid var(--stone-border);
       border-radius: 8px;
-      padding: clamp(4px, 1vh, 8px) clamp(10px, 2vw, 20px);
+      padding: clamp(6px, 1.2vh, 10px) clamp(10px, 2vw, 20px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
     .hud-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.75rem, 2vh, 1.2rem);
+      font-size: clamp(0.8rem, 2.2vh, 1.3rem);
       color: var(--gold-primary);
       text-shadow: 0 0 8px var(--gold-glow);
     }
@@ -207,7 +207,7 @@
       width: 100%;
     }
 
-    /* ESCENARIO DE LA PUERTA Y PERSONAJE */
+    /* ESCENARIO PUERTA Y PERSONAJE */
     .stage-container {
       flex: 1 1 42%;
       min-height: 0;
@@ -295,7 +295,7 @@
     .dungeon-arch.open .door-leaf.left { transform: rotateY(-112deg); }
     .dungeon-arch.open .door-leaf.right { transform: rotateY(112deg); }
 
-    /* CONSOLA Y TECLADO VIRTUAL */
+    /* CONSOLA DE INTERACCIÓN */
     .console-panel {
       flex: 1 1 58%;
       min-height: 0;
@@ -310,24 +310,29 @@
       gap: clamp(4px, 0.8vh, 10px);
     }
 
+    /* PANTALLA EXCLUSIVA PARA EL NÚMERO */
     .rune-display-card {
       background: #060504;
       border: 1px solid #5a4838;
       border-radius: 6px;
-      padding: clamp(4px, 1vh, 8px) clamp(12px, 3vw, 35px);
+      padding: clamp(6px, 1.2vh, 10px) clamp(12px, 3vw, 35px);
       text-align: center;
       width: 100%;
       max-width: 480px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .decimal-number {
-      font-size: clamp(1.6rem, 4.5vh, 2.8rem);
+      font-size: clamp(1.8rem, 5vh, 3.2rem);
       font-weight: 900;
       color: var(--gold-primary);
-      text-shadow: 0 0 10px var(--gold-glow);
-      line-height: 1.1;
+      text-shadow: 0 0 12px var(--gold-glow);
+      line-height: 1;
     }
 
+    /* VISOR VIRTUAL SIN TECLADO NATIVO */
     .roman-input-display {
       width: 100%;
       max-width: 480px;
@@ -405,7 +410,7 @@
     .feedback-banner.success { color: var(--green-success); }
     .feedback-banner.error { color: var(--ruby-red); }
 
-    /* REGLAS ADAPTATIVAS SEGÚN ORIENTACIÓN Y ALTURA DE PANTALLA */
+    /* PANTALLAS HORIZONTE O ANCHAS */
     @media (min-aspect-ratio: 1/1), (max-height: 520px) {
       .main-layout { 
         flex-direction: row; 
@@ -432,7 +437,7 @@
   <canvas id="ambientCanvas"></canvas>
   <div class="vignette"></div>
 
-  <!-- PANTALLA INICIAL DE BIENVENIDA -->
+  <!-- PANTALLA INICIAL -->
   <div class="modal-overlay" id="startModal">
     <div class="modal-card">
       <img src="logo.png" alt="Logo Editorial" class="editorial-logo-modal">
@@ -462,7 +467,7 @@
     </div>
   </div>
 
-  <!-- PANTALLA FINAL (RESUMEN) -->
+  <!-- PANTALLA FINAL -->
   <div class="modal-overlay hidden" id="endModal">
     <div class="modal-card">
       <img src="logo.png" alt="Logo Editorial" class="editorial-logo-modal">
@@ -540,7 +545,7 @@
           <div class="decimal-number" id="decimalDisplay">47</div>
         </div>
 
-        <!-- VISOR INTERNO (SIN INPUT NATIVO DEL SISTEMA) -->
+        <!-- VISOR INTERNO -->
         <div id="romanDisplay" class="roman-input-display">
           <span class="placeholder-text">INGRESA CÓDIGO</span>
         </div>

@@ -52,12 +52,35 @@
       pointer-events: none;
     }
 
+    /* --- LOGO DE LA EDITORIAL --- */
+    .editorial-logo-modal {
+      height: clamp(50px, 8vh, 85px);
+      width: auto;
+      max-width: 80%;
+      margin: 0 auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(243, 198, 79, 0.3));
+    }
+
+    .editorial-logo-hud {
+      height: clamp(26px, 4vh, 42px);
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     /* --- PANTALLAS MODALES (INICIAL Y FINAL) --- */
     .modal-overlay {
       position: absolute;
       inset: 0;
       z-index: 100;
-      background: rgba(5, 4, 3, 0.92);
+      background: rgba(5, 4, 3, 0.94);
       backdrop-filter: blur(10px);
       display: flex;
       justify-content: center;
@@ -82,12 +105,12 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: clamp(10px, 2vh, 18px);
+      gap: clamp(10px, 2vh, 16px);
     }
 
     .modal-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.2rem, 3.5vh, 1.8rem);
+      font-size: clamp(1.2rem, 3.5vh, 1.7rem);
       color: var(--gold-primary);
       text-shadow: 0 0 12px var(--gold-glow);
     }
@@ -150,13 +173,13 @@
       background: rgba(20, 16, 13, 0.92);
       border: 2px solid var(--stone-border);
       border-radius: 8px;
-      padding: clamp(6px, 1vh, 12px) clamp(12px, 2vw, 24px);
+      padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
     .hud-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(0.85rem, 2.2vh, 1.3rem);
+      font-size: clamp(0.85rem, 2.2vh, 1.2rem);
       color: var(--gold-primary);
       text-shadow: 0 0 8px var(--gold-glow);
     }
@@ -309,24 +332,33 @@
       line-height: 1.1;
     }
 
-    .roman-input {
+    /* VISOR VIRTUAL SIN TECLADO NATIVO */
+    .roman-input-display {
       width: 100%;
       max-width: 400px;
+      min-height: clamp(42px, 6vh, 54px);
       background: #000;
       border: 2px solid var(--stone-border);
       border-radius: 6px;
       padding: clamp(6px, 1.2vh, 10px);
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.1rem, 3vh, 1.6rem);
+      font-size: clamp(1.2rem, 3.2vh, 1.7rem);
+      font-weight: bold;
       color: #fff;
       text-align: center;
       letter-spacing: 4px;
-      outline: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      text-shadow: 0 0 8px var(--gold-glow);
     }
 
-    .roman-input:focus {
-      border-color: var(--gold-primary);
-      box-shadow: 0 0 12px var(--gold-glow);
+    .roman-input-display .placeholder-text {
+      color: #5a4838;
+      font-size: clamp(0.85rem, 2vh, 1rem);
+      letter-spacing: 2px;
+      font-weight: normal;
     }
 
     .roman-keypad {
@@ -340,16 +372,17 @@
     .key-btn {
       background: linear-gradient(180deg, #3d3025 0%, #221a14 100%);
       border: 1px solid #6b5542;
-      border-radius: 5px;
+      border-radius: 6px;
       color: #e2d9cc;
       font-family: 'Cinzel', serif;
-      font-size: clamp(0.9rem, 2.2vh, 1.2rem);
+      font-size: clamp(1rem, 2.4vh, 1.3rem);
       font-weight: 700;
-      padding: clamp(8px, 1.5vh, 12px) 0;
+      padding: clamp(10px, 1.8vh, 14px) 0;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
+      touch-action: manipulation;
     }
 
     .key-btn:active { background: var(--gold-primary); color: #000; }
@@ -377,7 +410,7 @@
     .feedback-banner.success { color: var(--green-success); }
     .feedback-banner.error { color: var(--ruby-red); }
 
-    /* HORIZONTAL EN PANTALLAS ANCHAS / PIZARRAS */
+    /* HORIZONTAL EN PANTALLAS ANCHAS / PIZARRAS DIGITALES */
     @media (min-aspect-ratio: 1.2/1) and (min-height: 350px) {
       .main-layout { flex-direction: row; }
       .stage-container { flex: 1 1 50%; height: 100%; }
@@ -393,25 +426,26 @@
   <!-- PANTALLA INICIAL DE BIENVENIDA -->
   <div class="modal-overlay" id="startModal">
     <div class="modal-card">
+      <img src="logo.png" alt="Logo Editorial" class="editorial-logo-modal">
       <h1 class="modal-title">🏛️ EL ESCAPE DE LA MAZMORRA</h1>
-      <p style="color: #c5b49d;">Escribe el código en números romanos para abrir la puerta y liberar al centurión.</p>
+      <p style="color: #c5b49d;">Utiliza los botones de la pantalla para marcar el código romano correcto.</p>
       
       <div class="rules-list">
         <div class="rule-item">
           <span>📜</span>
-          <span><strong>Desafío de 30 Rondas:</strong> Deberás resolver 30 puertas con números decimales aleatorios hasta el <strong>999</strong>.</span>
+          <span><strong>Desafío de 30 Rondas:</strong> Resuelve los códigos en números romanos del 1 al <strong>999</strong>.</span>
         </div>
         <div class="rule-item">
           <span>👍</span>
-          <span><strong>Aciertos (+10 Puntos):</strong> Si aciertas el código, el romano mostrará su aprobación con el pulgar arriba.</span>
+          <span><strong>Aciertos (+10 Puntos):</strong> Abre la puerta con la combinación correcta para avanzar.</span>
         </div>
         <div class="rule-item">
           <span>👎</span>
-          <span><strong>Errores (-5 Puntos):</strong> Si fallas, el romano aparecerá lamentándose y restarás 5 puntos.</span>
+          <span><strong>Errores (-5 Puntos):</strong> Si el código es incorrecto, restarás 5 puntos.</span>
         </div>
         <div class="rule-item">
-          <span>⌨️</span>
-          <span><strong>Controles:</strong> Puedes pulsar los botones de la pantalla o escribir con tu teclado.</span>
+          <span>📱</span>
+          <span><strong>Control Táctil:</strong> Diseñado para jugar directamente desde la pantalla táctil o ratón.</span>
         </div>
       </div>
 
@@ -422,6 +456,7 @@
   <!-- PANTALLA FINAL (RESUMEN) -->
   <div class="modal-overlay hidden" id="endModal">
     <div class="modal-card">
+      <img src="logo.png" alt="Logo Editorial" class="editorial-logo-modal">
       <h1 class="modal-title" id="endTitle">🏆 ¡DESAFÍO COMPLETADO!</h1>
       <p id="endSubtitle" style="color: #c5b49d;">Has completado las 30 rondas de la mazmorra.</p>
       
@@ -438,7 +473,10 @@
   <!-- INTERFAZ DEL JUEGO -->
   <div class="game-viewport">
     <header class="hud-header">
-      <div class="hud-title">🏛️ MAZMORRA ROMANA</div>
+      <div class="brand-container">
+        <img src="logo.png" alt="Logo Editorial" class="editorial-logo-hud">
+        <div class="hud-title">🏛️ MAZMORRA ROMANA</div>
+      </div>
       <div class="hud-stats">
         <div>RONDA <span id="roundVal" class="stat-val">1/30</span></div>
         <div>PUNTOS <span id="scoreVal" class="stat-val">0</span></div>
@@ -451,12 +489,10 @@
         <div class="torch-light left">🔥</div>
         
         <div class="dungeon-arch" id="archFrame">
-          <!-- CÁMARA INTERIOR QUE REVELA LA IMAGEN CORRESPONDIENTE -->
           <div class="character-chamber" id="characterChamber">
-            <!-- Imagen inyectada dinámicamente -->
+            <!-- Imagen de ACIERTO.png o ERROR.png -->
           </div>
           
-          <!-- HOJA IZQUIERDA DE LA PUERTA -->
           <div class="door-leaf left">
             <svg style="width:100%;height:100%;" viewBox="0 0 100 200" preserveAspectRatio="none">
               <defs>
@@ -475,7 +511,6 @@
             </svg>
           </div>
 
-          <!-- HOJA DERECHA DE LA PUERTA -->
           <div class="door-leaf right">
             <svg style="width:100%;height:100%;" viewBox="0 0 100 200" preserveAspectRatio="none">
               <rect x="0" y="0" width="100" height="200" fill="url(#woodG)"/>
@@ -497,7 +532,10 @@
           <div class="decimal-number" id="decimalDisplay">47</div>
         </div>
 
-        <input type="text" id="romanInput" class="roman-input" placeholder="CÓDIGO" autocomplete="off">
+        <!-- VISOR INTERNO (SIN INPUT DE TEXTO TECLADO NATIVO) -->
+        <div id="romanDisplay" class="roman-input-display">
+          <span class="placeholder-text">INGRESA CÓDIGO</span>
+        </div>
 
         <div class="roman-keypad">
           <button class="key-btn" onclick="appendSymbol('I')">I</button>
@@ -517,11 +555,11 @@
   </div>
 
   <script>
-    /* --- REFERENCIA A TUS IMÁGENES DE ACIERTO Y ERROR --- */
+    /* --- REFERENCIA A IMÁGENES --- */
     const ACIERTO_IMG_HTML = `<img src="ACIERTO.png" alt="¡Acierto!" class="roman-character-img">`;
     const ERROR_IMG_HTML = `<img src="ERROR.png" alt="¡Error!" class="roman-character-img">`;
 
-    /* --- EFECTOS DE SONIDO SINTETIZADOS --- */
+    /* --- AUDIO SINTETIZADO --- */
     const AudioSys = {
       ctx: null,
       init() {
@@ -573,15 +611,16 @@
       }
     };
 
-    /* --- LÓGICA DEL JUEGO --- */
+    /* --- ESTADO DEL JUEGO --- */
     const MAX_ROUNDS = 30;
     let currentRound = 1;
     let currentScore = 0;
     let targetDecimal = 0;
+    let currentInputText = "";
     let isAnimating = false;
 
     const decimalDisplay = document.getElementById('decimalDisplay');
-    const romanInput = document.getElementById('romanInput');
+    const romanDisplay = document.getElementById('romanDisplay');
     const feedbackBanner = document.getElementById('feedbackBanner');
     const archFrame = document.getElementById('archFrame');
     const characterChamber = document.getElementById('characterChamber');
@@ -606,6 +645,14 @@
       return str;
     }
 
+    function updateDisplay() {
+      if (currentInputText.length === 0) {
+        romanDisplay.innerHTML = '<span class="placeholder-text">INGRESA CÓDIGO</span>';
+      } else {
+        romanDisplay.textContent = currentInputText;
+      }
+    }
+
     function startGame() {
       startModal.classList.add('hidden');
       currentRound = 1;
@@ -615,7 +662,6 @@
     }
 
     function generateRound() {
-      // Dificultad progresiva de 1 a 999
       let min = 1, max = 30;
       if (currentRound > 8 && currentRound <= 18) {
         min = 31; max = 300;
@@ -625,26 +671,30 @@
 
       targetDecimal = Math.floor(Math.random() * (max - min + 1)) + min;
       decimalDisplay.textContent = targetDecimal;
-      romanInput.value = '';
-      romanInput.focus();
+      currentInputText = "";
+      updateDisplay();
     }
 
     function appendSymbol(char) {
+      if (isAnimating) return;
       AudioSys.playClick();
-      romanInput.value += char;
-      romanInput.focus();
+      if (currentInputText.length < 12) {
+        currentInputText += char;
+        updateDisplay();
+      }
     }
 
     function clearInput() {
+      if (isAnimating) return;
       AudioSys.playClick();
-      romanInput.value = romanInput.value.slice(0, -1);
-      romanInput.focus();
+      currentInputText = currentInputText.slice(0, -1);
+      updateDisplay();
     }
 
     function validateCode() {
       if (isAnimating) return;
 
-      const userAttempt = romanInput.value.trim().toUpperCase();
+      const userAttempt = currentInputText.trim().toUpperCase();
       const expectedRoman = toRoman(targetDecimal);
 
       if (!userAttempt) {
@@ -655,13 +705,11 @@
       isAnimating = true;
 
       if (userAttempt === expectedRoman) {
-        // ACIERTO (+10 PUNTOS) Y MUESTRA ACIERTO.png
         currentScore += 10;
         AudioSys.playSuccess();
         showFeedback("¡CORRECTO! +10 PUNTOS", "success");
         characterChamber.innerHTML = ACIERTO_IMG_HTML;
       } else {
-        // ERROR (-5 PUNTOS) Y MUESTRA ERROR.png
         currentScore = Math.max(0, currentScore - 5);
         AudioSys.playError();
         showFeedback(`¡INCORRECTO! (-5 PTS) CÓDIGO: ${expectedRoman}`, "error");
@@ -671,7 +719,6 @@
       updateHUD();
       archFrame.classList.add('open');
 
-      // Animación de apertura y cambio de ronda
       setTimeout(() => {
         archFrame.classList.remove('open');
         showFeedback("", "");
@@ -713,14 +760,6 @@
       endModal.classList.add('hidden');
       startGame();
     }
-
-    romanInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') validateCode();
-    });
-
-    romanInput.addEventListener('input', function() {
-      this.value = this.value.toUpperCase().replace(/[^IVXLCDM]/g, '');
-    });
 
     /* --- FONDO DE PARTÍCULAS --- */
     const canvas = document.getElementById('ambientCanvas');
